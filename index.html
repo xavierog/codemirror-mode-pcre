@@ -1,0 +1,739 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>CodeMirror PCRE mode</title>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.css"
+			integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer" />
+		<link rel="stylesheet" href="src/pcre.css">
+		<style>
+			.CodeMirror {
+				border-top: 1px solid black;
+				border-bottom: 1px solid black;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>CodeMirror PCRE mode</h1>
+		<p>
+			This is a <a href="https://codemirror.net/">CodeMirror</a> mode that brings
+			syntax highlighting for <a href="https://www.pcre.org/">Perl Compatible Regular Expressions (PCRE)</a>.
+		</p>
+		<p>
+			<strong>MIME types defined:</strong>
+			<ul>
+				<li>text/x-regex</li>
+				<li>text/x-pcre-regex</li>
+			</ul>
+		</p>
+		<p>
+			<strong>Options:</strong>
+			<ul>
+				<li>extended: boolean: initial state of the 'x' flag; default: true.</li>
+			</ul>
+		</p>
+		<p>
+			<strong>Table of contents:</strong>
+			<ul>
+				<li><a href="#h2pcresyntax">man pcresyntax</a>
+				<li><a href="#h2pcrepattern">Examples from man pcrepattern</a>
+				<li><a href="#h2details">Other details</a>
+			</ul>
+		</p>
+		<h2 id="h2pcresyntax">man pcresyntax</h2>
+		<p>
+		This is a slightly adjusted copy of `man pcresyntax`. This man page reflects most PCRE syntactic structures in a
+		colourful way thanks to CodeMirror and the PCRE mode.
+		</p>
+		<textarea id="pcresyntax">
+# PCRESYNTAX(3)                                  Library Functions Manual                                 PCRESYNTAX(3)
+#
+# NAME
+#        PCRE - Perl-compatible regular expressions
+#
+# PCRE REGULAR EXPRESSION SYNTAX SUMMARY
+#
+#        The  full  syntax  and  semantics  of  the regular expressions that are supported by PCRE are described in the
+#        pcrepattern documentation. This document contains a quick-reference summary of the syntax.
+#
+# QUOTING
+
+          \x         where x is non-alphanumeric is a literal x
+          \Q...\E    treat enclosed characters as literal
+
+# CHARACTERS
+
+          \a       # alarm, that is, the BEL character (hex 07)
+          \cx      # "control-x", where x is any ASCII character
+          \e       # escape (hex 1B)
+          \f       # form feed (hex 0C)
+          \n       # newline (hex 0A)
+          \r       # carriage return (hex 0D)
+          \t       # tab (hex 09)
+          \077     # character with octal code 0dd
+          \777     # character with octal code ddd, or backreference
+          \o{777}  # character with octal code ddd..
+          \xff     # character with hex code hh
+          \x{fffe} # character with hex code hhh..
+
+#        Note that \0dd is always an octal code, and that \8 and \9 are the literal characters "8" and "9".
+#
+# CHARACTER TYPES
+
+          .        # any character except newline;
+                   #   in dotall mode, any character whatsoever
+          \C       # one data unit, even in UTF mode (best avoided)
+          \d       # a decimal digit
+          \D       # a character that is not a decimal digit
+          \h       # a horizontal white space character
+          \H       # a character that is not a horizontal white space character
+          \N       # a character that is not a newline
+          \p{Pi}   # a character with the xx property
+          \P{Pi}   # a character without the xx property
+          \R       # a newline sequence
+          \s       # a white space character
+          \S       # a character that is not a white space character
+          \v       # a vertical white space character
+          \V       # a character that is not a vertical white space character
+          \w       # a "word" character
+          \W       # a "non-word" character
+          \X       # a Unicode extended grapheme cluster
+
+#        By default, \d, \s, and \w match only ASCII characters, even in UTF-8 mode or in the 16- bit  and  32-bit  li‐
+#        braries.  However,  if  locale-specific  matching  is happening, \s and \w may also match characters with code
+#        points in the range 128-255. If the PCRE_UCP option is set, the behaviour of these escape sequences is changed
+#        to use Unicode properties and they match many more characters.
+
+# GENERAL CATEGORY PROPERTIES FOR \p and \P
+
+       \p{C}       # Other
+       \p{Cc}      # Control
+       \p{Cf}      # Format
+       \p{Cn}      # Unassigned
+       \p{Co}      # Private use
+       \p{Cs}      # Surrogate
+
+       \p{L}       # Letter
+       \p{Ll}      # Lower case letter
+       \p{Lm}      # Modifier letter
+       \p{Lo}      # Other letter
+       \p{Lt}      # Title case letter
+       \p{Lu}      # Upper case letter
+       \p{L&}      # Ll, Lu, or Lt
+
+       \p{M}       # Mark
+       \p{Mc}      # Spacing mark
+       \p{Me}      # Enclosing mark
+       \p{Mn}      # Non-spacing mark
+
+       \p{N}       # Number
+       \p{Nd}      # Decimal number
+       \p{Nl}      # Letter number
+       \p{No}      # Other number
+
+       \p{P}       # Punctuation
+       \p{Pc}      # Connector punctuation
+       \p{Pd}      # Dash punctuation
+       \p{Pe}      # Close punctuation
+       \p{Pf}      # Final punctuation
+       \p{Pi}      # Initial punctuation
+       \p{Po}      # Other punctuation
+       \p{Ps}      # Open punctuation
+
+       \p{S}       # Symbol
+       \p{Sc}      # Currency symbol
+       \p{Sk}      # Modifier symbol
+       \p{Sm}      # Mathematical symbol
+       \p{So}      # Other symbol
+
+       \p{Z}       # Separator
+       \p{Zl}      # Line separator
+       \p{Zp}      # Paragraph separator
+       \p{Zs}      # Space separator
+
+# PCRE SPECIAL CATEGORY PROPERTIES FOR \p and \P
+
+       \p{Xan}     # Alphanumeric: union of properties L and N
+       \p{Xps}     # POSIX space: property Z or tab, NL, VT, FF, CR
+       \p{Xsp}     # Perl space: property Z or tab, NL, VT, FF, CR
+       \p{Xuc}     # Univerally-named character: one that can be
+                   #   represented by a Universal Character Name
+       \p{Xwd}     # Perl word: property Xan or underscore
+
+#        Perl  and  POSIX  space  are  now  the same. Perl added VT to its space character set at release 5.18 and PCRE
+#        changed at release 8.34.
+
+# SCRIPT NAMES FOR \p AND \P
+
+       \p{Arabic}, \p{Armenian}, \p{Avestan}, \p{Balinese}, \p{Bamum}, \p{Bassa_Vah}, \p{Batak}, \p{Bengali},
+       \p{Bopomofo}, \p{Brahmi}, \p{Braille}, \p{Buginese}, \p{Buhid}, \p{Canadian_Aboriginal}, \p{Carian},
+       \p{Caucasian_Albanian}, \p{Chakma}, \p{Cham}, \p{Cherokee}, \p{Common}, \p{Coptic}, \p{Cuneiform},
+       \p{Cypriot}, \p{Cyrillic}, \p{Deseret}, \p{Devanagari}, \p{Duployan}, \p{Egyptian_Hieroglyphs}, \p{Elbasan},
+       \p{Ethiopic}, \p{Georgian}, \p{Glagolitic}, \p{Gothic}, \p{Grantha}, \p{Greek}, \p{Gujarati}, \p{Gurmukhi},
+       \p{Han}, \p{Hangul}, \p{Hanunoo}, \p{Hebrew}, \p{Hiragana}, \p{Imperial_Aramaic}, \p{Inherited},
+       \p{Inscriptional_Pahlavi}, \p{Inscriptional_Parthian}, \p{Javanese}, \p{Kaithi}, \p{Kannada}, \p{Katakana},
+       \p{Kayah_Li}, \p{Kharoshthi}, \p{Khmer}, \p{Khojki}, \p{Khudawadi}, \p{Lao}, \p{Latin}, \p{Lepcha}, \p{Limbu},
+       \p{Linear_A}, \p{Linear_B}, \p{Lisu}, \p{Lycian}, \p{Lydian}, \p{Mahajani}, \p{Malayalam}, \p{Mandaic},
+       \p{Manichaean}, \p{Meetei_Mayek}, \p{Mende_Kikakui}, \p{Meroitic_Cursive}, \p{Meroitic_Hieroglyphs}, \p{Miao},
+       \p{Modi}, \p{Mongolian}, \p{Mro}, \p{Myanmar}, \p{Nabataean}, \p{New_Tai_Lue}, \p{Nko}, \p{Ogham},
+       \p{Ol_Chiki}, \p{Old_Italic}, \p{Old_North_Arabian}, \p{Old_Permic}, \p{Old_Persian}, \p{Old_South_Arabian},
+       \p{Old_Turkic}, \p{Oriya}, \p{Osmanya}, \p{Pahawh_Hmong}, \p{Palmyrene}, \p{Pau_Cin_Hau}, \p{Phags_Pa},
+       \p{Phoenician}, \p{Psalter_Pahlavi}, \p{Rejang}, \p{Runic}, \p{Samaritan}, \p{Saurashtra}, \p{Sharada},
+       \p{Shavian}, \p{Siddham}, \p{Sinhala}, \p{Sora_Sompeng}, \p{Sundanese}, \p{Syloti_Nagri}, \p{Syriac},
+       \p{Tagalog}, \p{Tagbanwa}, \p{Tai_Le}, \p{Tai_Tham}, \p{Tai_Viet}, \p{Takri}, \p{Tamil}, \p{Telugu},
+       \p{Thaana}, \p{Thai}, \p{Tibetan}, \p{Tifinagh}, \p{Tirhuta}, \p{Ugaritic}, \p{Vai}, \p{Warang_Citi}, \p{Yi}.
+
+# CHARACTER CLASSES
+
+       [...]        # positive character class
+       [^...]       # negative character class
+       [x-y]        # range (can be used for hex characters)
+       [[:word:]]   # positive POSIX named set
+       [[:^word:]]  # negative POSIX named set
+
+       [[:alnum:]]  # alphanumeric
+       [[:alpha:]]  # alphabetic
+       [[:ascii:]]  # 0-127
+       [[:blank:]]  # space or tab
+       [[:cntrl:]]  # control character
+       [[:digit:]]  # decimal digit
+       [[:graph:]]  # printing, excluding space
+       [[:lower:]]  # lower case letter
+       [[:print:]]  # printing, including space
+       [[:punct:]]  # printing, excluding alphanumeric
+       [[:space:]]  # white space
+       [[:upper:]]  # upper case letter
+       [[:word:]]   # same as \w
+       [[:xdigit:]] # hexadecimal digit
+
+#        In  PCRE,  POSIX  character set names recognize only ASCII characters by default, but some of them use Unicode
+#        properties if PCRE_UCP is set. You can use \Q...\E inside a character class.
+
+# QUANTIFIERS
+
+          ?         # 0 or 1, greedy
+          ?+        # 0 or 1, possessive
+          ??        # 0 or 1, lazy
+          *         # 0 or more, greedy
+          *+        # 0 or more, possessive
+          *?        # 0 or more, lazy
+          +         # 1 or more, greedy
+          ++        # 1 or more, possessive
+          +?        # 1 or more, lazy
+          {1}       # exactly n
+          {1,6}     # at least n, no more than m, greedy
+          {1,6}+    # at least n, no more than m, possessive
+          {1,6}?    # at least n, no more than m, lazy
+          {1,}      # n or more, greedy
+          {1,}+     # n or more, possessive
+          {1,}?     # n or more, lazy
+
+# ANCHORS AND SIMPLE ASSERTIONS
+
+          \b        # word boundary
+          \B        # not a word boundary
+          ^         # start of subject
+                    #  also after internal newline in multiline mode
+          \A        # start of subject
+          $         # end of subject
+                    #  also before newline at end of subject
+                    #  also before internal newline in multiline mode
+          \Z        # end of subject
+                    #  also before newline at end of subject
+          \z        # end of subject
+          \G        # first matching position in subject
+
+# MATCH POINT RESET
+
+          \K        # reset start of match
+
+#        \K is honoured in positive assertions, but ignored in negative ones.
+
+# ALTERNATION
+
+          expr|expr|expr...
+
+# CAPTURING
+
+          (...)         # capturing group
+          (?<name>...)  # named capturing group (Perl)
+          (?'name'...)  # named capturing group (Perl)
+          (?P<name>...) # named capturing group (Python)
+          (?:...)       # non-capturing group
+          (?|...)       # non-capturing group; reset group numbers for
+                        #  capturing groups in each alternative
+
+# ATOMIC GROUPS
+
+          (?>...)       # atomic, non-capturing group
+
+# COMMENT
+
+          (?#....)      # comment (not nestable)
+
+# OPTION SETTING
+
+          (?i)          # caseless
+          (?J)          # allow duplicate names
+          (?m)          # multiline
+          (?s)          # single line (dotall)
+          (?U)          # default ungreedy (lazy)
+          (?x)          # extended (ignore white space)
+          (?-iUs)       # unset option(s)
+
+#        The following are recognized only at the very start of a pattern or after one of the  newline  or  \R  options
+#        with similar syntax. More than one of them may appear.
+
+          (*LIMIT_MATCH=4)     # set the match limit to d (decimal number)
+          (*LIMIT_RECURSION=3) # set the recursion limit to d (decimal number)
+          (*NO_AUTO_POSSESS)   # no auto-possessification (PCRE_NO_AUTO_POSSESS)
+          (*NO_START_OPT)      # no start-match optimization (PCRE_NO_START_OPTIMIZE)
+          (*UTF8)              # set UTF-8 mode: 8-bit library (PCRE_UTF8)
+          (*UTF16)             # set UTF-16 mode: 16-bit library (PCRE_UTF16)
+          (*UTF32)             # set UTF-32 mode: 32-bit library (PCRE_UTF32)
+          (*UTF)               # set appropriate UTF mode for the library in use
+          (*UCP)               # set PCRE_UCP (use Unicode properties for \d etc)
+
+#        Note  that  LIMIT_MATCH  and  LIMIT_RECURSION  can  only  reduce  the value of the limits set by the caller of
+#        pcre_exec(), not increase them.
+
+# NEWLINE CONVENTION
+
+#        These are recognized only at the very start of the pattern or after option settings with a similar syntax.
+
+          (*CR)         # carriage return only
+          (*LF)         # linefeed only
+          (*CRLF)       # carriage return followed by linefeed
+          (*ANYCRLF)    # all three of the above
+          (*ANY)        # any Unicode newline sequence
+
+# WHAT \R MATCHES
+
+#        These are recognized only at the very start of the pattern or after option setting with a similar syntax.
+
+          (*BSR_ANYCRLF) # CR, LF, or CRLF
+          (*BSR_UNICODE) # any Unicode newline sequence
+
+# LOOKAHEAD AND LOOKBEHIND ASSERTIONS
+
+          (?=...)       # positive look ahead
+          (?!...)       # negative look ahead
+          (?<=...)      # positive look behind
+          (?<!...)      # negative look behind
+
+#        Each top-level branch of a look behind must be of a fixed length.
+
+# BACKREFERENCES
+
+          \1            # reference by number (can be ambiguous)
+          \g2           # reference by number
+          \g{3}         # reference by number
+          \g{-4}        # relative reference by number
+          \k<name>      # reference by name (Perl)
+          \k'name'      # reference by name (Perl)
+          \g{name}      # reference by name (Perl)
+          \k{name}      # reference by name (.NET)
+          (?P=name)     # reference by name (Python)
+
+# SUBROUTINE REFERENCES (POSSIBLY RECURSIVE)
+
+          (?R)          # recurse whole pattern
+          (?1)          # call subpattern by absolute number
+          (?+2)         # call subpattern by relative number
+          (?-3)         # call subpattern by relative number
+          (?&name)      # call subpattern by name (Perl)
+          (?P>name)     # call subpattern by name (Python)
+          \g<name>      # call subpattern by name (Oniguruma)
+          \g'name'      # call subpattern by name (Oniguruma)
+          \g<4>         # call subpattern by absolute number (Oniguruma)
+          \g'5'         # call subpattern by absolute number (Oniguruma)
+          \g<+6>        # call subpattern by relative number (PCRE extension)
+          \g'+7'        # call subpattern by relative number (PCRE extension)
+          \g<-8>        # call subpattern by relative number (PCRE extension)
+          \g'-9'        # call subpattern by relative number (PCRE extension)
+
+# CONDITIONAL PATTERNS
+
+          (?(condition)yes-pattern)
+          (?(condition)yes-pattern|no-pattern)
+
+          (?(1)...)      # absolute reference condition
+          (?(+2)...)     # relative reference condition
+          (?(-3)...)     # relative reference condition
+          (?(<name>)...) # named reference condition (Perl)
+          (?('name')...) # named reference condition (Perl)
+          (?(name)...)   # named reference condition (PCRE)
+          (?(R)...)      # overall recursion condition
+          (?(R4)...)     # specific group recursion condition
+          (?(R&name)...) # specific recursion condition
+          (?(DEFINE)...) # define subpattern for reference
+          (?(?=assert).) # assertion condition
+
+# BACKTRACKING CONTROL
+
+#        The following act immediately they are reached:
+
+          (*ACCEPT)     # force successful match
+          (*FAIL)       (?# force backtrack; synonym) (*F)
+          (*MARK:NAME)  (?# set name to be passed back; synonym) (*:NAME)
+
+#        The following act only when a subsequent match failure causes a backtrack to reach  them.  They  all  force  a
+#        match  failure,  but they differ in what happens afterwards. Those that advance the start-of-match point do so
+#        only if the pattern is not anchored.
+
+          (*COMMIT)     # overall failure, no advance of starting point
+          (*PRUNE)      # advance to next starting character
+          (*PRUNE:NAME) # equivalent to (*MARK:NAME)(*PRUNE)
+          (*SKIP)       # advance to current matching position
+          (*SKIP:NAME)  # advance to position corresponding to an earlier
+                        # (*MARK:NAME); if not found, the (*SKIP) is ignored
+          (*THEN)       # local failure, backtrack to next alternation
+          (*THEN:NAME)  # equivalent to (*MARK:NAME)(*THEN)
+
+# CALLOUTS
+
+          (?C)    # callout
+          (?C255) # callout with data n
+
+# SEE ALSO
+#
+#        pcrepattern(3), pcreapi(3), pcrecallout(3), pcrematching(3), pcre(3).
+#
+# AUTHOR
+#
+#        Philip Hazel
+#        University Computing Service
+#        Cambridge CB2 3QH, England.
+#
+# REVISION
+#
+#        Last updated: 08 January 2014
+#        Copyright (c) 1997-2014 University of Cambridge.
+#
+# PCRE 8.35                                          08 January 2014                                      PCRESYNTAX(3)</textarea>
+		<h2 id="h2pcrepattern">Examples from man pcrepattern</h2>
+		<p>
+			`man pcrepattern` is much longer than `man pcresyntax`, which is why only its examples were reproduced below.
+		</p>
+		<textarea id="pcrepattern">
+(*CR)a.b
+
+\Qabc$xyz\E \Qabc\$xyz\E \Qabc\E\$\Qxyz\E
+
+\040  # is another way of writing an ASCII space
+\40   # is the same, provided there are fewer than 40 previous capturing subpatterns
+\7    # is always a back reference
+\11   # might be a back reference, or another way of writing a tab
+\011  # is always a tab
+\0113 # is a tab followed by the character "3"
+\113  # might be a back reference, otherwise the character with octal code 113
+\377  # might be a back reference, otherwise the value 255 (decimal)
+\81   # is either a back reference, or the two characters "8" and "1"
+
+\xdc is exactly the same as \x{dc}, or \u00dc in JavaScript mode.
+
+[In addition, inside a character class, \b is interpreted as the backspace character (hex 08).]
+
+[\N is not allowed in a character class.]
+[\B, \R, and \X are not special inside a character class.]
+
+# In 8-bit non-UTF-8 mode \R is equivalent to the following:
+(?>\r\n|\n|\x0b|\f|\r|\x85)
+
+foo\Kbar
+(foo)\Kbar
+^abc$
+
+(?|	(?=[\x00-\x7f])(\C) |
+	(?=[\x80-\x{7ff}])(\C)(\C) |
+	(?=[\x{800}-\x{ffff}])(\C)(\C)(\C) |
+	(?=[\x{10000}-\x{1fffff}])(\C)(\C)(\C)(\C))
+
+[aeiou] [^aeiou] [d-m]
+[W-]46] [W-\]46]
+[z-\xff]
+[A-\d] [A-[:digit:]]
+[\000-\037]
+(?i)[W-c] [][\\^_`wxyzabc]
+[\xc8-\xcb]
+# If a closing square bracket is required as a member of the class, it should be the first data character in the class
+# (after an initial circumflex, if present) or escaped with a backslash.
+[]\\^_`wxyzabc]
+
+[01[:alpha:]%]
+[12[:^digit:]]
+
+[[:<:]]  is converted to  \b(?=\w)
+[[:>:]]  is converted to  \b(?<=\w)
+# Only these exact character sequences are recognized. A sequence such as
+[a[:<:]b]
+# provokes error for an unrecognized POSIX class name.
+
+gilbert|sullivan
+(a(?i)b)c
+(a(?i)b|c)
+
+cat(aract|erpillar|)
+ ((red|white) (king|queen))
+((?:red|white) (king|queen))
+
+(?i:saturday|sunday)
+(?:(?i)saturday|sunday)
+
+(?|(Sat)ur|(Sun))day
+/(?|(abc)|(def))\1/
+/(?|(abc)|(def))(?1)/
+
+(?<DN>Mon|Fri|Sun)(?:day)?|
+(?<DN>Tue)(?:sday)?|
+(?<DN>Wed)(?:nesday)?|
+(?<DN>Thu)(?:rsday)?|
+(?<DN>Sat)(?:urday)?
+
+
+(?:(?<n>foo)|(?<n>bar))\k<n>
+z{2,4}
+[aeiou]{3,}
+\d{8}
+(a?)*
+/\*.*\*/
+/\*.*?\*/
+\d??\d
+(.*)abc\1
+(?>.*?a)b
+(tweedle[dume]{3}\s*)+
+/(a|(b))+/
+\d+foo
+(?>\d+)foo
+\d++foo
+(abc|xyz){2,3}+
+(\D+|<\d+>)*[!?]
+((?>\D+)|<\d+>)*[!?]
+(ring), \1
+(ring), \g1
+(ring), \g{1}
+(abc(def)ghi)\g{-1}
+(sens|respons)e and \1ibility
+((?i)rah)\s+\1
+(?<p1>(?i)rah)\s+\k<p1>
+(?'p1'(?i)rah)\s+\k{p1}
+(?P<p1>(?i)rah)\s+(?P=p1)
+(?<p1>(?i)rah)\s+\g{p1}
+(a|(bc))\2
+(a\1)
+(a|b\1)+
+\w+(?=;)
+foo(?!bar)
+(?!foo)bar
+(?<!foo)bar
+(?<=bullock|donkey)
+(?<!dogs?|cats?)
+(?<=ab(c|de))
+(?<=abc|abde)
+abcd$
+^.*abcd$
+^.*+(?<=abcd)
+(?<=\d{3})(?<!999)foo
+(?<=\d{3}...)(?<!999)foo
+(?<=(?<!foo)bar)baz
+(?<=\d{3}(?!999)...)foo
+
+(?(condition)yes-pattern)
+(?(condition)yes-pattern|no-pattern)
+
+(?(1) (A|B|C) | (D | (?(2)E|F) | E) )
+
+( \( )?    [^()]+    (?(1) \) )
+
+( \( )?    [^()]+    (?(-1) \) )
+
+(?<OPEN> \( )?    [^()]+    (?(<OPEN>) \) )
+
+(?(R3)...) or (?(R&name)...)
+
+(?(DEFINE) (?<byte> 2[0-4]\d | 25[0-5] | 1\d\d | [1-9]?\d) )
+\b (?&byte) (\.(?&byte)){3} \b
+
+
+(?(?=[^a-z]*[a-z])
+\d{2}-[a-z]{3}-\d{2}  |  \d{2}-\d{2}-\d{2} )
+
+abc #comment \n still comment
+( \( ( [^()]++ | (?1) )* \) )
+(?<pn> \( ( [^()]++ | (?&pn) )* \) )
+(ab(cd)ef)
+< (?: (?(R) \d++  | [^<>]*+) | (?R)) * >
+^(.|(.)(?1)\2)$
+^((.)(?1)\2|.)$
+^((.)(?1)\2|.?)$
+^(?:((.)(?1)\2|)|((.)(?3)\4|.))
+^\W*+(?:((.)\W*+(?1)\W*+\2|)|((.)\W*+(?3)\W*+\4|\W*+.\W*+))\W*+$
+^(.)(\1|a(?2))
+
+(...(absolute)...)...(?2)...
+(...(relative)...)...(?-1)...
+(...(?+1)...(relative)...)
+(sens|respons)e and \1ibility
+(sens|respons)e and (?1)ibility
+(abc)(?i:(?-1))
+(?<pn> \( ( (?>[^()]+) | \g<pn> )* \) )
+(sens|respons)e and \g'1'ibility
+(abc)(?i:\g<-1>)
+(?C1)abc(?C2)def
+# An explicit callout may also be set at this position, as in this example:
+# Note that this applies only to assertion conditions, not to other types of condition.
+(?(?C9)(?=a)abc|def)
+A((?:A|B(*ACCEPT)|C)D)
+a+(?C)(*FAIL)
+/X(*MARK:A)Y|X(*MARK:B)Z/K
+a+(*COMMIT)b
+/(*COMMIT)abc/
+a+(*SKIP)b
+( COND1 (*THEN) FOO | COND2 (*THEN) BAR | COND3 (*THEN) BAZ ) ...
+A (B(*THEN)C) | D
+A (B(*THEN)C | (*FAIL)) | D
+^.*? (?(?=a) a | b(*THEN)c )
+(A(*COMMIT)B(*THEN)C|ABD)
+...(*COMMIT)(*PRUNE)...
+/(a(*COMMIT)b)+ac/</textarea>
+		<h2 id="h2details">Other details</h2>
+		<textarea id="details">
+# Option setting: extended mode (x) is enabled by default
+(?-i) (?-J) (?-m) (?-s) (?-U) (?-x) # This part is no longer in extended mode so this is not a comment
+(?iJm) (?-iJm) (?iJm-sUx) (?xJm-s-U-i) # Back to extended mode: this is a comment
+
+# Reset group numbers:
+(?|(reset)|(group)|(numbers))
+
+## Everything that can take a name:
+# Capturing groups:
+ (?<named>capturing_group)  (?<1badname>capturing_group)  (?<nametoolooooooooooooooooooooooooong>capturing_group)
+(?P<named>capturing_group) (?P<2badname>capturing_group) (?P<nametoolooooooooooooooooooooooooong>capturing_group)
+ (?'named'capturing_group)  (?'3badname'capturing_group)  (?'nametoolooooooooooooooooooooooooong'capturing_group)
+
+# Backreferences:
+ \g{name}  \g{1badname}  \g{nametoolooooooooooooooooooooooooong}
+ \k{name}  \k{1badname}  \k{nametoolooooooooooooooooooooooooong}
+ \k<name>  \k<1badname>  \k<nametoolooooooooooooooooooooooooong>
+ \k'name'  \k'1badname'  \k'nametoolooooooooooooooooooooooooong'
+(?P=name) (?P=1badname) (?P=nametoolooooooooooooooooooooooooong)
+
+# Subroutines:
+(?P>name) (?P>1badname) (?P>nametoolooooooooooooooooooooooooong)
+ (?&name)  (?&1badname)  (?&nametoolooooooooooooooooooooooooong)
+ \g<name>  \g<1badname>  \g<nametoolooooooooooooooooooooooooong>
+ \g'name'  \g'1badname'  \g'nametoolooooooooooooooooooooooooong'
+
+# Conditions:
+ (?(<name>)...) (?(<1badname>)...) (?(<nametoolooooooooooooooooooooooooong>)...)
+ (?('name')...) (?('1badname')...) (?('nametoolooooooooooooooooooooooooong')...)
+  (?(name)...)   (?(1badname)...)   (?(nametoolooooooooooooooooooooooooong)...)
+(?(R&name)...) (?(R&1badname)...) (?(R&nametoolooooooooooooooooooooooooong)...)
+
+# Verbs:
+     (*:name)      (*:1badname)      (*:nametoolooooooooooooooooooooooooong)
+ (*MARK:name)  (*MARK:1badname)  (*MARK:nametoolooooooooooooooooooooooooong)
+(*PRUNE:name) (*PRUNE:1badname) (*PRUNE:nametoolooooooooooooooooooooooooong)
+ (*SKIP:name)  (*SKIP:1badname)  (*SKIP:nametoolooooooooooooooooooooooooong)
+ (*THEN:name)  (*THEN:1badname)  (*THEN:nametoolooooooooooooooooooooooooong)
+
+# Nested groups on a single line:
+  (?<level1>  (?<level2>  (?<level3>  (?<level4>  (?<level5>  (?<level6>  (?<level7>  (?<level8>  8)  7)  6)  5)  4)  3)  2)  1)
+
+# Nested groups on multiple lines:
+	(?<level1>
+		(?<level2>
+			(?<level3>
+				(?<level4>
+					(?<level5>
+						(?<level6>
+							(?<level7>
+								(?<level8>
+									This ought to be enough for everyone ©
+								)
+							)
+						)
+					)
+				)
+			)
+		)
+	)
+
+\[\\\#/\]       # [\#/] escaped
+
+# Better \Q...\E test:
+\Q Everything between \Q and \ E is escaped: !@#$%^&*()_-+[]{} \E
+
+# \Q...\E in a character class:
+[123\QYou can use \Q...\ E inside character classes\E456]
+
+# It remains ugly in extended mode though:
+\Q hello
+   I span
+   multiple lines
+   and this is ugly
+\E
+
+# Octal notations:
+\0 \07 \077 \123 \o{456}
+
+# Hexadecimal notations:
+\x \xa \xaa \xAA \x{bb} \u12ff
+
+(?C) (?C0) (?C1) (?C23) (?C234) (?C255) (?C256) # callouts
+
+\d \D \h \H \v \V \w \W
+\n \N # LF (line feed, 0x0A) character vs any character that is not a newline
+
+# More \p tests:
+\p{C}   \P{C}   \p{^C}   \P{^C}
+\p{L&}  \P{L&}  \p{^L&}  \P{^L&}
+\p{Xwd} \P{Xwd} \p{^Xwd} \P{^Xwd}
+\p{Han} \P{Han} \p{^Han} \P{^Han}
+\p{Hna} \P{Hna} \p{^Hna} \P{^Hna} # The Han/Hna typo is made visible
+
+# POSIX named classes are supported only within a class:
+[:word:] [:^space:]
+[
+	[:alnum:]  [:alpha:]  [:ascii:]  [:blank:]   [:cntrl:]
+	[:digit:]  [:graph:]  [:lower:]  [:print:]   [:punct:]
+	[:space:]  [:upper:]  [:word:]   [:xdigit:]  [:fake:]
+	[:^alnum:] [:^alpha:] [:^ascii:] [:^blank:]  [:^cntrl:]
+	[:^digit:] [:^graph:] [:^lower:] [:^print:]  [:^punct:]
+	[:^space:] [:^upper:] [:^word:]  [:^xdigit:] [:^fake:]
+]
+
+# Quantifiers: there are no {,m} quantifiers:
+x{,6}      # For example, {,6} is not  a  quantifier, but a literal string of four characters.
+
+# Conditional patterns: DEFINE should not prevent names starting with "DEFINE"
+(?(DEFINER)yes-pattern|no-pattern)</textarea>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.js" 
+			integrity="sha512-ZTpbCvmiv7Zt4rK0ltotRJVRaSBKFQHQTrwfs6DoYlBYzO1MA6Oz2WguC+LkV8pGiHraYLEpo7Paa+hoVbCfKw=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer">
+		</script>
+		<script src="src/pcre.js"></script>
+		<script>
+			var conf = {
+				lineNumbers: true,
+				indentWithTabs: true,
+				showCursorWhenSelecting: true,
+				mode: {
+					name: 'pcre',
+					extended: true,
+				},
+			};
+			CodeMirror.fromTextArea(document.getElementById('pcresyntax'), conf);
+			CodeMirror.fromTextArea(document.getElementById('pcrepattern'), conf);
+			CodeMirror.fromTextArea(document.getElementById('details'), conf);
+		</script>
+	</body>
+</html>
