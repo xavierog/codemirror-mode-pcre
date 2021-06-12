@@ -1,0 +1,24 @@
+{
+  "name": "codemirror-mode-pcre",
+  "version": "1.0.0",
+  "description": "Perl Compatible Regular Expressions (PCRE) mode for CodeMirror",
+  "main": "src/pcre.js",
+  "scripts": {
+    "test": "true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xavierog/codemirror-mode-pcre.git"
+  },
+  "keywords": [
+    "codemirror-mode",
+    "pcre",
+    "pcre-regex"
+  ],
+  "author": "Xavier G.",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/xavierog/codemirror-mode-pcre/issues"
+  },
+  "homepage": "https://github.com/xavierog/codemirror-mode-pcre#readme"
+}
