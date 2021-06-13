@@ -41,11 +41,31 @@
 		<p>
 			<strong>Table of contents:</strong>
 			<ul>
+				<li><a href="#h2nested">Use as nested mode</a>
 				<li><a href="#h2pcresyntax">man pcresyntax</a>
 				<li><a href="#h2pcrepattern">Examples from man pcrepattern</a>
 				<li><a href="#h2details">Other details</a>
 			</ul>
 		</p>
+		<h2 id="h2nested">Use as nested mode</h2>
+		<p>
+			Below is a demonstration of how the PCRE mode can be used to highlight regular expressions within other languages (here, nginx).
+		</p>
+		<textarea id="nested">
+server {
+	location ~ "(?x) # Enable PCRE extended mode
+		^
+		/user
+		/(?<action>login|logout|profile) # Also include 'profile' because...
+		/(?<tail>.*)
+	"
+	{
+		if ($tail ~ "^(some|[^/]+/really|compl(?:ex|icated)|stuff|t?here)$") {
+			return 307 "${scheme}://${host}/somewhere/else/${tail}${is_args}${args}";
+		}
+		# ...
+	}
+}</textarea>
 		<h2 id="h2pcresyntax">man pcresyntax</h2>
 		<p>
 		This is a slightly adjusted copy of `man pcresyntax`. This man page reflects most PCRE syntactic structures in a
@@ -722,6 +742,59 @@ x{,6}      # For example, {,6} is not  a  quantifier, but a literal string of fo
 		</script>
 		<script src="src/pcre.js"></script>
 		<script>
+			CodeMirror.defineMode('nginx-mini+regex', function(options) {
+				var pcre_mode = CodeMirror.getMode({mode: {extended: false}}, {name: 'pcre'});
+				return {
+					startState: function() {
+						return {
+							current: '',
+							pcre_state: CodeMirror.startState(pcre_mode),
+							expect_regex: false, // whether the next string should be a regex
+						};
+					},
+					copyState: function(os) { // os = original state
+						return {
+							current: os.current,
+							pcre_state: CodeMirror.copyState(pcre_mode, os.pcre_state),
+							expect_regex: os.expect_regex,
+						};
+					},
+					token: function(stream, state) {
+						if (state.current === 'string' || state.current === 'regex') {
+							if (stream.eat('"')) {
+								state.current = '';
+								return 'string';
+							}
+							if (state.current === 'regex') return pcre_mode.token(stream, state.pcre_state);
+							if (!stream.match('\\"')) stream.next();
+							return state.current;
+						}
+						var operator = stream.match(/(=|~|~\*|\^~)/);
+						if (operator) {
+							state.expect_regex = operator[1][0] === '~'; // ~ and ~* imply a regex
+							return 'operator';
+						}
+						if (stream.eat('"')) {
+							state.current = state.expect_regex ? 'regex' : 'string';
+							if (state.expect_regex) state.pcre_state = CodeMirror.startState(pcre_mode);
+							state.expect_regex = false; // ^ new regex, new PCRE state object
+							return 'string';
+						}
+						/* Minimalistic nginx syntax highlighting, just for demonstration purposes: */
+						if (stream.eat('#')) {
+							stream.skipToEnd();
+							return 'comment';
+						}
+						if (stream.match(/\b(?:if|return|server|location)\b/)) return 'keyword';
+						if (stream.match(/\$\w+/)) return 'variable-3';
+						if (stream.match(/\d+/)) return 'number';
+						stream.next();
+						return state.current;
+					},
+				};
+			});
+		</script>
+		<script>
 			var conf = {
 				lineNumbers: true,
 				indentWithTabs: true,
@@ -734,6 +807,8 @@ x{,6}      # For example, {,6} is not  a  quantifier, but a literal string of fo
 			CodeMirror.fromTextArea(document.getElementById('pcresyntax'), conf);
 			CodeMirror.fromTextArea(document.getElementById('pcrepattern'), conf);
 			CodeMirror.fromTextArea(document.getElementById('details'), conf);
+			conf.mode = {name: 'nginx-mini+regex'};
+			CodeMirror.fromTextArea(document.getElementById('nested'), conf);
 		</script>
 	</body>
 </html>

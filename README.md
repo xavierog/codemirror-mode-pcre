@@ -13,11 +13,15 @@ codemirror-mode-pcre supports extended mode (`x` flag) and actually enables it b
 ### Theming
 This mode does not leverage CodeMirror's default tokens (they are not exactly fitted for regular expressions). Consequently, if you use a theme other than the default one, you will likely want to write your own `pcre.css` file.
 
+### Nesting
+codemirror-mode-pcre can be nested within another mode, i.e. it can highlight regular expressions for another mode.
+This requires adjusting the other mode though.
+See the demo page for an example of such nesting.
+
 ## Non-features
 codemirror-mode-pcre does **not** offer:
 - completion (e.g. suggesting POSIX class names or script names for `\p` and `\P`);
 - tooltips reflecting what the various parts of an expression actually mean;
-- nested mode, i.e. the ability to highlight regular expressions as part of another mode;
 - support for fancy module loaders.
 
 Those may come in the future though.
