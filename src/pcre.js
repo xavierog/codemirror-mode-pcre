@@ -498,13 +498,25 @@ CodeMirror.defineMode('pcre', function(options) {
 	}
 
 	function handle_name(stream, state) {
-		var ret;
+		var ret, rem, consume_limit;
 		var ch = stream.next();
 		// Names must start with a non-digit.
-		if (!state.name_value.length && (!ch.match(/\w/) || ch.match(/\d/))) ret = 'err erroneous-start-of-name';
+		if (!state.name_value.length && (!ch.match(/\w/) || ch.match(/\d/))) {
+			ret = 'err erroneous-start-of-name';
+			consume_limit = 0;
+		}
 		// Names consist of up to 32 alphanumeric characters and underscores.
-		else if (state.name_value.length > 31) ret = 'err name-too-long';
+		else if (state.name_value.length > 31) {
+			ret = 'err name-too-long';
+			consume_limit = -1;
+		} else consume_limit = 32 - state.name_value.length - 1;
 		state.name_value += ch;
+		if (consume_limit < 0) {
+			if (rem = stream.match(/^\w+/)) state.name_value += rem[0];
+		} else while (consume_limit --) {
+			if (rem = stream.match(/^\w/)) state.name_value += rem[0];
+			else break;
+		}
 		var next_char = stream.peek();
 		if (!next_char || !next_char.match(/\w/)) return pop(state, ret);
 		return all_tokens(state, ret);
