@@ -374,6 +374,11 @@ CodeMirror.defineMode('pcre', function(options) {
 		if (!state.context.length) return false;
 		return state.context[state.context.length - 1];
 	}
+	function consume(stream) {
+		// As a nested mode, we should not consume too much so as to let the nesting mode in charge.
+		// That said, eating \w is usually safe:
+		if (!stream.match(/\w+/)) stream.next();
+	}
 	function all_tokens(state, token) {
 		var result = state.context.join(' ');
 		if (token) result += ' ' + token;
@@ -689,7 +694,7 @@ CodeMirror.defineMode('pcre', function(options) {
 
 		if (current_state === 'escaped-sequence') {
 			if (stream.match('\\E')) return pop(state, 'escaped-sequence-end');
-			stream.next();
+			consume(stream);
 			return all_tokens(state);
 		}
 
@@ -723,7 +728,7 @@ CodeMirror.defineMode('pcre', function(options) {
 				else return all_tokens(state, 'err unknown-posix-class-name');
 			}
 			if (stream.eat(']')) return pop(state, 'character-class');
-			stream.next();
+			consume(stream);
 			return all_tokens(state);
 		}
 
@@ -818,7 +823,7 @@ CodeMirror.defineMode('pcre', function(options) {
 			stream.eat(/[+?]/);
 			return all_tokens(state, 'quantifier');
 		}
-		stream.next();
+		consume(stream);
 		return all_tokens(state);
 	}
 
