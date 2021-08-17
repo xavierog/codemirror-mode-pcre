@@ -1,4 +1,11 @@
-CodeMirror.defineMode('pcre', function(options) {
+CodeMirror.defineMode('pcre', function(editor_options, mode_options) {
+	// Default settings:
+	var options = {
+		extended: true,
+	};
+	// Override default settings with user-provided settings:
+	if ('extended' in mode_options) options.extended = Boolean(mode_options.extended);
+
 	var delimiters = {
 		'<': '>',
 		'[': ']',
@@ -845,7 +852,7 @@ CodeMirror.defineMode('pcre', function(options) {
 			context_state: [],
 			group_level: 0,
 			name_value: '',
-			extended: ('extended' in options.mode) ? Boolean(options.mode.extended) : true,
+			extended: options.extended,
 		};
 	}
 

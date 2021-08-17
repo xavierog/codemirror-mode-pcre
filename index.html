@@ -742,8 +742,8 @@ x{,6}      # For example, {,6} is not  a  quantifier, but a literal string of fo
 		</script>
 		<script src="src/pcre.js"></script>
 		<script>
-			CodeMirror.defineMode('nginx-mini+regex', function(options) {
-				var pcre_mode = CodeMirror.getMode({mode: {extended: false}}, {name: 'pcre'});
+			CodeMirror.defineMode('nginx-mini+regex', function(editor_options, mode_options) {
+				var pcre_mode = CodeMirror.getMode(editor_options, {name: 'pcre', extended: false});
 				return {
 					startState: function() {
 						return {
