@@ -1,3 +1,6 @@
+// Declare global variable CodeMirror to avoid warnings in JSHint
+/* global CodeMirror */
+
 CodeMirror.defineMode('pcre', function(editor_options, mode_options) {
 	// Default settings:
 	var options = {
