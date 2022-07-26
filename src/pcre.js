@@ -392,7 +392,7 @@ CodeMirror.defineMode('pcre', function(editor_options, mode_options) {
 		return result;
 	}
 	function push(state, new_context, new_context_state, token) {
-		ret = all_tokens(state, token);
+		var ret = all_tokens(state, token);
 		state.context.push(new_context);
 		state.context_state.push(new_context_state || {});
 		return ret;
@@ -532,7 +532,7 @@ CodeMirror.defineMode('pcre', function(editor_options, mode_options) {
 	function handle_callout(stream, state) {
 		// (?C)       callout
 		// (?Cn)      callout with data n
-		rem = stream.match(callout_regex);
+		var rem = stream.match(callout_regex);
 		if (rem) {
 			return Number(rem[1]) < 256 ? 'callout' : 'err erroneous-callout-number';
 		}
