@@ -590,7 +590,7 @@
 				condition_state.ok = true;
 				return all_tokens(state, 'backreference');
 			}
-			rem = stream.match(/([<'])/);
+			var rem = stream.match(/([<'])/);
 			if (rem) {
 				condition_state.ok = false;
 				expect_end(state, delimiter(rem[1]));
