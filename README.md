@@ -21,8 +21,7 @@ See the demo page for an example of such nesting.
 ## Non-features
 codemirror-mode-pcre does **not** offer:
 - completion (e.g. suggesting POSIX class names or script names for `\p` and `\P`);
-- tooltips reflecting what the various parts of an expression actually mean;
-- support for fancy module loaders.
+- tooltips reflecting what the various parts of an expression actually mean.
 
 Those may come in the future though.
 
