@@ -750,6 +750,12 @@ x{,6}      # For example, {,6} is not  a  quantifier, but a literal string of fo
 			crossorigin="anonymous"
 			referrerpolicy="no-referrer">
 		</script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/addon/edit/matchbrackets.js"
+			integrity="sha512-xUUWekUNHRMUrO8BL11fcEbz6rcJW55X6LkW9MNcAGgCRbxGmMXmXG5Ds5O6v2BLb90AVT1I+ualk0G9IYx3bw=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer">
+		</script>
 		<script src="src/pcre.js"></script>
 		<script>
 			CodeMirror.defineMode('nginx-mini+regex', function(editor_options, mode_options) {
@@ -830,6 +836,11 @@ x{,6}      # For example, {,6} is not  a  quantifier, but a literal string of fo
 				lineNumbers: true,
 				indentWithTabs: true,
 				showCursorWhenSelecting: true,
+				// Enable matching for {} [] and () but not <> because syntaxes
+				// that feature a single '<' or '>' (specifically: atomic
+				// groups, lookbehinds and Python subpatterns) trigger
+				// undesirable behaviour:
+				matchBrackets: true,
 				mode: {
 					name: 'pcre',
 					extended: true,
