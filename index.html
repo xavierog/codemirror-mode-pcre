@@ -49,9 +49,10 @@
 		</p>
 		<h2 id="h2nested">Use as nested mode</h2>
 		<p>
-			Below is a demonstration of how the PCRE mode can be used to highlight regular expressions within other languages (here, nginx).
+			Below are demonstrations of how the PCRE mode can be used to highlight regular expressions within other languages.
+			This first example is an nginx configuration snippet:
 		</p>
-		<textarea id="nested">
+		<textarea id="nested-nginx">
 server {
 	location ~ "(?x) # Enable PCRE extended mode
 		^
@@ -66,6 +67,15 @@ server {
 		# ...
 	}
 }</textarea>
+		<p>This second example is a simple list of one-line regexes with comments:</p>
+		<textarea id="nested-regex-list">
+# This is a comment about this first regex:
+^hello
+
+  # This is another comment, this time with leading spaces:
+(?i)this is (?<what>a regex ) # not a comment
+
+^(?:good|bye )bye$</textarea>
 		<h2 id="h2pcresyntax">man pcresyntax</h2>
 		<p>
 		This is a slightly adjusted copy of `man pcresyntax`. This man page reflects most PCRE syntactic structures in a
@@ -795,6 +805,27 @@ x{,6}      # For example, {,6} is not  a  quantifier, but a literal string of fo
 			});
 		</script>
 		<script>
+			CodeMirror.defineMode('pcre-list', function(editor_options, mode_options) {
+				let pcre_mode = CodeMirror.getMode(editor_options, {name: 'pcre', extended: false});
+				return {
+					startState: function() {
+						return { pcre_state: CodeMirror.startState(pcre_mode) };
+					},
+					copyState: function(os) { // os = original state
+						return { pcre_state: CodeMirror.copyState(pcre_mode, os.pcre_state) };
+					},
+					token: function(stream, state) {
+						if (stream.sol()) {
+							if (stream.match(/^\s*#.*$/)) return 'comment';
+							// New non-comment line, new PCRE state:
+							state.pcre_state = CodeMirror.startState(pcre_mode);
+						}
+						return pcre_mode.token(stream, state.pcre_state);
+					},
+				};
+			});
+		</script>
+		<script>
 			var conf = {
 				lineNumbers: true,
 				indentWithTabs: true,
@@ -808,7 +839,9 @@ x{,6}      # For example, {,6} is not  a  quantifier, but a literal string of fo
 			CodeMirror.fromTextArea(document.getElementById('pcrepattern'), conf);
 			CodeMirror.fromTextArea(document.getElementById('details'), conf);
 			conf.mode = {name: 'nginx-mini+regex'};
-			CodeMirror.fromTextArea(document.getElementById('nested'), conf);
+			CodeMirror.fromTextArea(document.getElementById('nested-nginx'), conf);
+			conf.mode = {name: 'pcre-list'};
+			CodeMirror.fromTextArea(document.getElementById('nested-regex-list'), conf);
 		</script>
 	</body>
 </html>
