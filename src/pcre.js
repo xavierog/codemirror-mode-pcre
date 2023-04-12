@@ -401,7 +401,11 @@
 		}
 		function all_tokens(state, token) {
 			var result = state.context.join(' ');
-			if (token) result += ' ' + token;
+			if (token) {
+				// Avoid leading spaces as they confuse matchbrackets (see issue #4):
+				if (result) result += ' ';
+				result += token;
+			}
 			return result;
 		}
 		function push(state, new_context, new_context_state, token) {
@@ -836,7 +840,7 @@
 
 			if (stream.peek() === ')') {
 				if (current_state && current_state.match(/^group/)) {
-					ret = 'end-group';
+					ret = 'start-group'; // formerly 'end-group' but that used to confuse matchbrackets (see issue #4)
 					if (current_context_state(state).leave_closing_parenthesis) ret = '';
 					else stream.next();
 					-- state.group_level;
