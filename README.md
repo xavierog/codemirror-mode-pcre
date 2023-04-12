@@ -13,6 +13,8 @@ codemirror-mode-pcre supports extended mode (`x` flag) and actually enables it b
 ### Theming
 This mode does not leverage CodeMirror's default tokens (they are not exactly fitted for regular expressions). Consequently, if you use a theme other than the default one, you will likely want to write your own `pcre.css` file.
 
+**Breaking change:** starting with version 2.0.0, the `cm-end-group` style is no longer supported and should no longer be used. It is replaced with `cm-start-group`.
+
 ### Nesting
 codemirror-mode-pcre can be nested within another mode, i.e. it can highlight regular expressions for another mode.
 This requires adjusting the other mode though.
@@ -27,4 +29,3 @@ Those may come in the future though.
 
 ## License
 Like the PCRE library, this mode is released under the 3-clause BSD license.
-

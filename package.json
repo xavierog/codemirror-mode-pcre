@@ -1,6 +1,6 @@
 {
   "name": "codemirror-mode-pcre",
-  "version": "1.0.7",
+  "version": "2.0.0",
   "description": "Perl Compatible Regular Expressions (PCRE) mode for CodeMirror",
   "main": "src/pcre.js",
   "scripts": {
