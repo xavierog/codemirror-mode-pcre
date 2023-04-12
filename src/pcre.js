@@ -759,7 +759,7 @@
 					if (rem[1] in posix_named_sets) return all_tokens(state, 'generic-character-type');
 					else return all_tokens(state, 'err unknown-posix-class-name');
 				}
-				if (stream.eat(']')) return pop(state, 'character-class');
+				if (stream.eat(']')) return pop(state);
 				consume(stream);
 				return all_tokens(state);
 			}
